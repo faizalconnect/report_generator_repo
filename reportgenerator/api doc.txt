@@ -1,0 +1,17 @@
+http://127.0.0.1:8000/excel/upload/
+
+form-data document choose files
+
+
+{
+	"account_name":"",
+	"asset_id":"",
+	"department_name":"",
+	"failure_reason_id":"",
+	"closed":{
+		"start_time":"2017-10-11",
+		"end_time":"2017-10-12"
+	}
+}
+
+http://127.0.0.1:8000/excel/list/

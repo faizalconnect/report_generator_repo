@@ -1,0 +1,6 @@
+*.pyc
+/reportgenerator/*/migrations/*.pyc
+!/reportgenerator/*/migrations/*init*.py
+/reportgenerator/reportgenerator/
+/reportgenerator/static/*
+/reportgenerator/media/*
