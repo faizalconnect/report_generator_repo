@@ -1,4 +1,4 @@
-*bck*
+bck
 *.pyc
 /reportgenerator/*/migrations/*.pyc
 !/reportgenerator/*/migrations/*init*.py
