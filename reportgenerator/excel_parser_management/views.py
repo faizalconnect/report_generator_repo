@@ -44,6 +44,9 @@ class ExcelManagementList(APIView):
 		filter_item = request.data
 		excelextracted_obj = ExcelExtractedDataMongo.objects
 
+		if filter_item['job_id']:
+			excelextracted_obj = excelextracted_obj.filter(job_id = filter_item['job_id'] )
+
 		if filter_item['account_name']:
 			excelextracted_obj = excelextracted_obj.filter(account_name = filter_item['account_name'] )
 
