@@ -146,7 +146,6 @@ class ExcelManagementUpload(APIView):
 		job_instance = ExcelJobSerializer(data=request.data)
 		if job_instance.is_valid():
 			job_instance.save()
-			pdb.set_trace()
 			thread = threading.Thread(target=self.process_excel_file, \
 				args=(job_instance.data['id'],))
 			thread.start()
