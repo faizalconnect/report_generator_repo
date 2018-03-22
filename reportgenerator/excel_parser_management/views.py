@@ -41,31 +41,42 @@ class JobList(ListAPIView):
 	queryset = ExcelJobs.objects.all()
 	serializer_class = ExcelJobSerializer
 
+
 class ExcelManagementList(APIView):
 
-	"""this class is used to filter the data from mongo db 2541-769830 08/11/2017 08:19:00"""
+	"""this class is used to filter the data from mongo db"""
 	
+	# @use : this function is used to filter the data from mongo db
+	# @params: {"job_id" => id of the job,"account_name","asset_id","department_name",
+	#			,"failure_reason_id","closed"}
+	# @return: void
 	def post(self,request):
 		
 
 		filter_item = request.data
 		excelextracted_obj = ExcelExtractedDataMongo.objects
 
+		#filtering the mongodb data wrt job id
 		if filter_item['job_id']:
 			excelextracted_obj = excelextracted_obj.filter(job_id = filter_item['job_id'] )
 
+		#filtering the mongodb data wrt account name
 		if filter_item['account_name']:
 			excelextracted_obj = excelextracted_obj.filter(account_name = filter_item['account_name'] )
 
+		#filtering the mongodb data wrt asset id	
 		if filter_item['asset_id']:
 			excelextracted_obj = excelextracted_obj.filter(asset_location__startswith = filter_item['asset_id'] )
 
+		#filtering the mongodb data wrt department name	
 		if filter_item['department_name']:
 			excelextracted_obj = excelextracted_obj.filter(department_name = filter_item['department_name'] )
 
+		#filtering the mongodb data wrt failure reason
 		if filter_item['failure_reason_id']:
 			excelextracted_obj = excelextracted_obj.filter(failure_reason_id = filter_item['failure_reason_id'] )
 
+		#filtering the mongodb data wrt close time
 		if filter_item['closed']['start_time']:
 			#filter_date = datetime.strptime(filter_item['closed'], "" )
 			start_time = datetime.strptime(filter_item['closed']['start_time'], "%Y-%m-%d").isoformat()
@@ -74,6 +85,7 @@ class ExcelManagementList(APIView):
 				closed__gte = start_time, \
 				closed__lte = end_time \
 				 )
+		#serialising the filterd data	
 		serialized = ExcelExtractedDataMongoSerializer(excelextracted_obj, many = True)
 		return Response(serialized.data)
 
@@ -85,13 +97,19 @@ class ExcelManagementUpload(APIView):
 
 	parser_classes = (MultiPartParser,)
 
-
+	# @use : this function is used to process the uploaded excel file
+	# @params: {"job_id" => id of the job}
+	# @return: void
 	def process_excel_file(self,job_id):
+		#status code
 		COMPLETED,ERROR = 2,3
+		#get the job details wrt job id
 		job_instance = ExcelJobs.objects.get(id = job_id)
 		job_id = job_id
+		#get the document url
 		job_document = job_instance.document.url
 
+		#formating the header of the uploaded document
 		colomn_name_dict = { 
 			"Asset / Location":  "asset_location",
 			"Closed":  "closed",
@@ -108,7 +126,9 @@ class ExcelManagementUpload(APIView):
 			"Reason":  "reason"
 		}
 
+		#opening the uploaded excel file
 		xl = pd.ExcelFile('./'+job_document)
+		#reading the first sheet of the excel file
 		sheet_name = xl.sheet_names[0]
 		df = xl.parse(sheet_name)
 		df.rename(columns=colomn_name_dict, inplace=True)
@@ -118,6 +138,7 @@ class ExcelManagementUpload(APIView):
 		data_time_now = datetime.now()
 		pre_documents = []
 
+		#extracting each rows of the excel file to instaert into mongodb
 		for data in excel_json_data:
 			print data
 			pre_documents.append(
@@ -143,20 +164,23 @@ class ExcelManagementUpload(APIView):
 							)
 				)
 
-			# AccountNames.objects.get_or_create( \
-			# 	account_name = strip(data['account_name'])\
-			# 	)
-							
+		#inserting the excel file into mongo db collection					
 		ExcelExtractedDataMongo.objects.insert(pre_documents)
 		job_instance.status = COMPLETED
-		print "completed"
 		job_instance.save()
 
+	# @use : this function is used to create a job upload excel file
+	# @params: 
+	# @return: {"success" or "failed"}
 	def post(self,request,*args, **kwargs):
 		
+		#parsing the posted data 
 		job_instance = ExcelJobSerializer(data=request.data)
+		#validating the data
 		if job_instance.is_valid():
+			#saving a job
 			job_instance.save()
+			#processing the uploaded filed on thread
 			thread = threading.Thread(target=self.process_excel_file, \
 				args=(job_instance.data['id'],))
 			thread.start()

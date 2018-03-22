@@ -7,7 +7,7 @@ from .models import (
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
 class ExcelExtractedDataMongoSerializer(DocumentSerializer):
-	"""serializer for inserting data to monogp dataase"""
+	"""serializer for inserting/listing data t/from monodb dataase"""
 	class Meta:
 		model = ExcelExtractedDataMongo
 		#depth = 2
@@ -33,7 +33,7 @@ class ExcelExtractedDataSerializer(serializers.ModelSerializer):
 
 
 class ExcelJobSerializer(serializers.ModelSerializer):
-	#document = serializers.FileField(max_length=None,use_url=True)
+	"""serializer for listing.saving a job"""
 	class Meta:
 		model = ExcelJobs
 		fields = ('id', 'job_name', 'document', 'status', 'created_on')

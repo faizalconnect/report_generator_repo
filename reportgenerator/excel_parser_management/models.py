@@ -8,28 +8,32 @@ from datetime import datetime
 # Create your models here.
 class ExcelExtractedData(models.Model):
 	
-	#"""This model is used to keep extracted data from the excel file These are the fields listed in excel file"""
+	"""This model is used to keep extracted data from the excel file
+	These are the fields listed in excel file"""
 
-		account_name 		= models.TextField(blank=True, null=True)
-		asset_location 		= models.TextField(blank=True, null=True)
-		asset_name 			= models.TextField(blank=True, null=True)
-		closed 				= models.TextField(blank=True, null=True)
-		department_name 	= models.TextField(blank=True, null=True)
-		failure_reason_id 	= models.TextField(blank=True, null=True)
-		failure_reason_name = models.TextField(blank=True, null=True)
-		labor_report 		= models.TextField(blank=True, null=True)
-		manufacturer_name 	= models.TextField(blank=True, null=True)
-		model 				= models.TextField(blank=True, null=True)
-		reason 				= models.TextField(blank=True, null=True)
-		target_date 		= models.TextField(blank=True, null=True)
-		work_order 			= models.TextField(blank=True, null=True)
+	account_name 		= models.TextField(blank=True, null=True)
+	asset_location 		= models.TextField(blank=True, null=True)
+	asset_name 			= models.TextField(blank=True, null=True)
+	closed 				= models.TextField(blank=True, null=True)
+	department_name 	= models.TextField(blank=True, null=True)
+	failure_reason_id 	= models.TextField(blank=True, null=True)
+	failure_reason_name = models.TextField(blank=True, null=True)
+	labor_report 		= models.TextField(blank=True, null=True)
+	manufacturer_name 	= models.TextField(blank=True, null=True)
+	model 				= models.TextField(blank=True, null=True)
+	reason 				= models.TextField(blank=True, null=True)
+	target_date 		= models.TextField(blank=True, null=True)
+	work_order 			= models.TextField(blank=True, null=True)
 
 
-		def __str__(self):
-			return str(self.account_name)
+	def __str__(self):
+		return str(self.account_name)
 
 
 class ExcelExtractedDataMongo(Document):
+
+	"""This model is used to keep extracted data from the excel file
+	These are the fields listed in excel file and saving to mongo db"""
 	
 	job_id 				= IntField(required = True,  null=True)
 	account_name		= StringField(required=True, null=True)
@@ -51,17 +55,7 @@ class ExcelExtractedDataMongo(Document):
 	updated_on 			= DateTimeField(default=datetime.now())
 	updated_by 			= IntField(default = 1, null=True)
 
-	# @classmethod
-	# def insert(cls, sender, document, **kwargs):
-	# 	pdb.set_trace()
-	# 	document.updated_on = datetime.now()
-
-
-	# def save(self, *args, **kwargs):
-	# 	if not self.created_on:
-	# 		self.created_on = datetime.now()
-	# 	self.updated_on = datetime.now()
-	# 	return super(ExcelExtractedDataMongo, self).save(*args, **kwargs)
+	
 	
 	
 	
@@ -85,9 +79,3 @@ class ExcelJobs(models.Model):
 
 	def __str__(self):
 			return str(self.pk) + " "+str(self.job_name)
-		
-
-	# sigma.engg@yahoo.com 
-
-	# dire
-		
