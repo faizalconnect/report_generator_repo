@@ -14,7 +14,7 @@ class ExcelExtractedDataMongoSerializer(DocumentSerializer):
 		fields = ('job_id','account_name', 'asset_location', 'asset_name', \
 		 		  'closed', 'department_name', 'failure_reason_id' \
 		 		  ,'failure_reason_name','labor_report','manufacturer_name', \
-		 		  'model','reason','target_date','work_order'\
+		 		  'model','reason','target_date','work_order',\
 		 		  'created_on','created_by','updated_on','updated_by')
 
 

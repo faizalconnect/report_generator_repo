@@ -74,7 +74,8 @@ class ExcelManagementList(APIView):
 				closed__gte = start_time, \
 				closed__lte = end_time \
 				 )
-		return Response({"data":excelextracted_obj.to_json()})
+		serialized = ExcelExtractedDataMongoSerializer(excelextracted_obj, many = True)
+		return Response(serialized.data)
 
 	
 
