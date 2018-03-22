@@ -7,5 +7,7 @@ from excel_parser_management import views as excel_parser__view
 urlpatterns = [
     url(r'^list/$', excel_parser__view.ExcelManagementList.as_view()),
     url(r'^upload/$', excel_parser__view.ExcelManagementUpload.as_view()),
+    url(r'^jobs/$', excel_parser__view.JobList.as_view())
+    
     
 ]

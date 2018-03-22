@@ -13,6 +13,7 @@ from datetime import datetime
 import threading
 
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import FileUploadParser,MultiPartParser
@@ -33,6 +34,12 @@ from masters.models import(
 	AccountNames
 	)
 # Create your views here.
+
+
+class JobList(ListAPIView):
+	"""this class is used to list the jobs"""
+	queryset = ExcelJobs.objects.all()
+	serializer_class = ExcelJobSerializer
 
 class ExcelManagementList(APIView):
 

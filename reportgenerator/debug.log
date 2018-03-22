@@ -3288,3 +3288,49 @@ ValueError: unconverted data remains: 2017-11-10
             WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
             ORDER BY name; args=None
 (0.000) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+(0.000) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None
+(0.000) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+(0.000) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None
+(0.000) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+(0.000) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None
+(0.000) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+"POST /excel/jobs/ HTTP/1.1" 400 39
+(0.000) SELECT "excel_parser_management_exceljobs"."id", "excel_parser_management_exceljobs"."job_name", "excel_parser_management_exceljobs"."document", "excel_parser_management_exceljobs"."status", "excel_parser_management_exceljobs"."created_on" FROM "excel_parser_management_exceljobs"; args=()
+"GET /excel/jobs/ HTTP/1.1" 200 11060
+(0.000) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None
+(0.000) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+(0.000) SELECT "excel_parser_management_exceljobs"."id", "excel_parser_management_exceljobs"."job_name", "excel_parser_management_exceljobs"."document", "excel_parser_management_exceljobs"."status", "excel_parser_management_exceljobs"."created_on" FROM "excel_parser_management_exceljobs"; args=()
+"GET /excel/jobs/ HTTP/1.1" 200 11060
+(0.000) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None
+(0.000) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+(0.001) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None
+(0.000) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+(0.000) SELECT COUNT(*) AS "__count" FROM "excel_parser_management_exceljobs"; args=()
+(0.000) SELECT "excel_parser_management_exceljobs"."id", "excel_parser_management_exceljobs"."job_name", "excel_parser_management_exceljobs"."document", "excel_parser_management_exceljobs"."status", "excel_parser_management_exceljobs"."created_on" FROM "excel_parser_management_exceljobs" LIMIT 2; args=()
+"GET /excel/jobs/ HTTP/1.1" 200 422
+(0.000) SELECT COUNT(*) AS "__count" FROM "excel_parser_management_exceljobs"; args=()
+(0.000) SELECT "excel_parser_management_exceljobs"."id", "excel_parser_management_exceljobs"."job_name", "excel_parser_management_exceljobs"."document", "excel_parser_management_exceljobs"."status", "excel_parser_management_exceljobs"."created_on" FROM "excel_parser_management_exceljobs" LIMIT 2 OFFSET 2; args=()
+"GET /excel/jobs/?limit=2&offset=2 HTTP/1.1" 200 462
+(0.000) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None
+(0.000) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
