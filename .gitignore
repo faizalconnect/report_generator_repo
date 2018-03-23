@@ -1,6 +1,4 @@
 */bck
-!log
-*.log
 *.pyc
 *.sqlite3
 /reportgenerator/*/migrations/*.py
