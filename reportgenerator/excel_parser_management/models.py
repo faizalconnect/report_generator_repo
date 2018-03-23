@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from mongoengine import *
 from django.db import models
+from django.core.validators import FileExtensionValidator
 from datetime import datetime
 
 # Create your models here.
@@ -66,6 +67,8 @@ class ExcelExtractedDataMongo(Document):
 class ExcelJobs(models.Model):
 	"""Table for adding new jobs"""
 
+
+
 	STATUS_CHOICES = (
 		(1,"IN PROGRESS"),
 		(2,"COMPLETED"),
@@ -73,7 +76,7 @@ class ExcelJobs(models.Model):
 		)
 	
 	job_name = models.CharField(max_length=50,blank=True,null=True)
-	document = models.FileField(upload_to='documents/')
+	document = models.FileField(upload_to='documents/',validators=[FileExtensionValidator(allowed_extensions=['xlsx'])])
 	status   = models.IntegerField(choices=STATUS_CHOICES, default=1)
 	created_on = models.DateTimeField(auto_now_add=True, blank=True)
 

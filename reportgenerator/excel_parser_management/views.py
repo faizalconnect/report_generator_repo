@@ -11,21 +11,27 @@ import re
 import json
 from datetime import datetime
 import threading
+import logging
+
+
 
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import FileUploadParser,MultiPartParser
+from rest_framework import serializers 
 
+#from reportgenerator.core.constants import *
+from rest_framework import status
 
-from .serializers import (
+from excel_parser_management.serializers import (
 	ExcelExtractedDataSerializer,
 	ExcelJobSerializer,
 	ExcelExtractedDataMongoSerializer
 	)
 
-from .models import (
+from excel_parser_management.models import (
 	ExcelExtractedDataMongo,
 	ExcelJobs
 	)
@@ -33,9 +39,11 @@ from .models import (
 from masters.models import(
 	AccountNames
 	)
+
+
 # Create your views here.
 
-
+logger = logging.getLogger(__name__)
 class JobList(ListAPIView):
 	"""this class is used to list the jobs"""
 	queryset = ExcelJobs.objects.all()
@@ -101,89 +109,120 @@ class ExcelManagementUpload(APIView):
 	# @params: {"job_id" => id of the job}
 	# @return: void
 	def process_excel_file(self,job_id):
-		#status code
-		COMPLETED,ERROR = 2,3
-		#get the job details wrt job id
-		job_instance = ExcelJobs.objects.get(id = job_id)
-		job_id = job_id
-		#get the document url
-		job_document = job_instance.document.url
+		try:
 
-		#formating the header of the uploaded document
-		colomn_name_dict = { 
-			"Asset / Location":  "asset_location",
-			"Closed":  "closed",
-			"Labor Report":  "labor_report",
-			"Department Name":  "department_name",
-			"Target Date":  "target_date",
-			"Account Name":  "account_name",
-			"Failure Reason Name":  "failure_reason_name",
-			"Failure Reason ID":"failure_reason_id",
-			"Model":  "model", 
-			"Asset Name":  "asset_name",
-			"Manufacturer Name":  "manufacturer_name",
-			"Work Order #":  "work_order", 
-			"Reason":  "reason"
-		}
+			#status code
+			COMPLETED,ERROR = 2,3
+			#get the job details wrt job id
+			job_instance = ExcelJobs.objects.get(id = job_id)
+			#get the document url
+			job_document = job_instance.document.url
 
-		#opening the uploaded excel file
-		xl = pd.ExcelFile('./'+job_document)
-		#reading the first sheet of the excel file
-		sheet_name = xl.sheet_names[0]
-		df = xl.parse(sheet_name)
-		df.rename(columns=colomn_name_dict, inplace=True)
+			#formating the header of the uploaded document
+			colomn_name_dict = { 
+				"Asset / Location":  "asset_location",
+				"Closed":  "closed",
+				"Labor Report":  "labor_report",
+				"Department Name":  "department_name",
+				"Target Date":  "target_date",
+				"Account Name":  "account_name",
+				"Failure Reason Name":  "failure_reason_name",
+				"Failure Reason ID":"failure_reason_id",
+				"Model":  "model", 
+				"Asset Name":  "asset_name",
+				"Manufacturer Name":  "manufacturer_name",
+				"Work Order #":  "work_order", 
+				"Reason":  "reason"
+			}
+
+			#opening the uploaded excel file
+			xl = pd.ExcelFile('./'+job_document)
+			#reading the first sheet of the excel file
+			sheet_name = xl.sheet_names[0]
+			df = xl.parse(sheet_name)
+			df.rename(columns=colomn_name_dict, inplace=True)
+			
+			excel_json_data =  json.loads(df.reset_index().to_json(orient='records'))
+
+			data_time_now = datetime.now()
+			pre_documents = []
+
+			#extracting each rows of the excel file to instaert into mongodb
+			for data in excel_json_data:
+				pre_documents.append(
+					ExcelExtractedDataMongo( \
+								job_id 					= job_id, \
+								account_name 			= data['account_name'], \
+								asset_location 			= data['asset_location'], \
+								asset_name 				= data['asset_name'], \
+								model 					= data['model'], \
+								manufacturer_name 		= data['manufacturer_name'], \
+								failure_reason_id 		= data['failure_reason_id'], \
+								reason 					= data['reason'], \
+								work_order 				= data['work_order'], \
+								failure_reason_name 	= data['failure_reason_name'], \
+								department_name 		= data['department_name'], \
+								labor_report 			= data['labor_report'], \
+								closed 					= datetime.fromtimestamp(data['closed']/1000.0), \
+								target_date 			= datetime.fromtimestamp(data['target_date']/1000.0), \
+								created_on 				= data_time_now, \
+								updated_on 				= data_time_now, \
+								created_by 				= 1, \
+								updated_by				= 1
+								)
+					)
+
+			#inserting the excel file into mongo db collection ExcelExtractedDataMongos 					
+			ExcelExtractedDataMongo.objects.insert(pre_documents)
+			job_instance.status = COMPLETED
+			job_instance.save()
+			logging.debug("jobid:%s, file processing completed  "%(str(job_instance.id)))
 		
-		excel_json_data =  json.loads(df.reset_index().to_json(orient='records'))
+		except Exception as ex:
+			logging.debug("jobid:%s,%s  "%(str(job_instance.id),str(ex)))
 
-		data_time_now = datetime.now()
-		pre_documents = []
-
-		#extracting each rows of the excel file to instaert into mongodb
-		for data in excel_json_data:
-			print data
-			pre_documents.append(
-				ExcelExtractedDataMongo( \
-							job_id 					= job_id, \
-							account_name 			= data['account_name'], \
-							asset_location 			= data['asset_location'], \
-							asset_name 				= data['asset_name'], \
-							model 					= data['model'], \
-							manufacturer_name 		= data['manufacturer_name'], \
-							failure_reason_id 		= data['failure_reason_id'], \
-							reason 					= data['reason'], \
-							work_order 				= data['work_order'], \
-							failure_reason_name 	= data['failure_reason_name'], \
-							department_name 		= data['department_name'], \
-							labor_report 			= data['labor_report'], \
-							closed 					= datetime.fromtimestamp(data['closed']/1000.0), \
-							target_date 			= datetime.fromtimestamp(data['target_date']/1000.0), \
-							created_on 				= data_time_now, \
-							updated_on 				= data_time_now, \
-							created_by 				= 1, \
-							updated_by				= 1
-							)
-				)
-
-		#inserting the excel file into mongo db collection					
-		ExcelExtractedDataMongo.objects.insert(pre_documents)
-		job_instance.status = COMPLETED
-		job_instance.save()
 
 	# @use : this function is used to create a job upload excel file
 	# @params: 
 	# @return: {"success" or "failed"}
 	def post(self,request,*args, **kwargs):
-		
-		#parsing the posted data 
-		job_instance = ExcelJobSerializer(data=request.data)
-		#validating the data
-		if job_instance.is_valid():
-			#saving a job
-			job_instance.save()
-			#processing the uploaded filed on thread
-			thread = threading.Thread(target=self.process_excel_file, \
-				args=(job_instance.data['id'],))
-			thread.start()
+		result = {}
+		result['status'] = True
+		result['message'] = "file uploaded successfully"
+		result['errormsg'] = ""
+		RESPONSE_STATUS = status.HTTP_200_OK
+
+		try:
+
+			#parsing the posted data 
+			job_instance = ExcelJobSerializer(data=request.data)
+			#validating the data
+			if job_instance.is_valid():
+				#saving a job
+				job_instance.save()
+
+				jobid = job_instance.data['id']
+				#processing the uploaded filed on thread
+				thread = threading.Thread(target=self.process_excel_file, \
+					args=(jobid,))
+				thread.start()
+				logging.info("jobid:%s, file uploaded success fully"%(str(jobid)))
+			else:
+				
+				RESPONSE_STATUS = status.HTTP_400_BAD_REQUEST
+				result['status'] = False
+				result['message'] = "file uploading failed"
+				result['errormsg'] =  job_instance.errors
+				logging.debug(str(job_instance.errors))
+
+		except Exception as ex:
+			RESPONSE_STATUS = status.HTTP_403_FORBIDDEN
+			result['status'] = False
+			result['message'] = "file uploading failed"
+			result['errormsg'] = str(ex)
+			logging.debug(str(ex))
 			
-		return Response({"status":"success"})
+		return Response(result,status=RESPONSE_STATUS)
+
+
 

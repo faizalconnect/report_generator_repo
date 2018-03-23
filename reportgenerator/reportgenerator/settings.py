@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import mongoengine
+import datetime
+
+now = datetime.datetime.now()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -87,30 +90,60 @@ DATABASES = {
     }
 }
 
+
+# ADMINS = (('ADMIN','qa.x@gmail.com'),)
+# MANAGERS = ADMINS
+# DEFAULT_FROM_EMAIL = 'qa.x@gmail.com'
+# SERVER_EMAIL = 'qa.x@gmail.com'
+# #MAILER_LIST = ['qa.cycloides@gmail.com']
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'qa.x@gmail.com'
+# EMAIL_HOST_PASSWORD = 'x.mailer'
+# EMAIL_PORT = 587
+# EMAIL_FROM_ADDRESS = 'qa.x@gmail.com'
+# EMAIL_USE_TLS = True
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'debug.log',
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(filename)s %(funcName)s %(lineno)d [Pid %(process)d, Thread %(thread)d]: %(message)s'
         },
+    },
+    'handlers': {
+        'default': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'log/debug_'+str(now.strftime('%Y-%m-%d'))+'.log',
+            'maxBytes': 1024 * 1024 * 5,  
+            
+            'formatter': 'standard'
+        },
+         'mail_admins': {
+            'level': 'DEBUG',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'standard'
+        }
     },
     'loggers': {
-        'django': {
-            'handlers': ['file'],
+        '': {
+            #'handlers': ['default','mail_admins'],
+            'handlers': ['default'],
             'level': 'DEBUG',
-            'propagate': True,
+            'propagate': True
         },
-    },
+        # 'django.request': {
+        #     'handlers': ['mail_admins'],
+        #     'level': 'DEBUG',
+        #     'propagate': True
+        # },
+    }
 }
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_PARSER_CLASSES': (
-#         'rest_framework.parsers.FileUploadParser'
-#     )
-# }
+
+
+
 
 
 # Password validation
