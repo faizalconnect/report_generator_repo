@@ -1,6 +1,8 @@
-bck
+*/bck
 *.log
 *.pyc
+*.sqlite3
+/reportgenerator/*/migrations/*.py
 /reportgenerator/*/migrations/*.pyc
 !/reportgenerator/*/migrations/*init*.py
 /reportgenerator/reportgenerator/
