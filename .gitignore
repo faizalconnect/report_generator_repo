@@ -1,4 +1,5 @@
 */bck
+!log
 *.log
 *.pyc
 *.sqlite3
