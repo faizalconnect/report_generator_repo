@@ -4,6 +4,6 @@
 /reportgenerator/*/migrations/*.py
 /reportgenerator/*/migrations/*.pyc
 !/reportgenerator/*/migrations/*init*.py
-/reportgenerator/reportgenerator/
+!/reportgenerator/reportgenerator/
 /reportgenerator/static/*
 /reportgenerator/media/*
