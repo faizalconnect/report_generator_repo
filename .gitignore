@@ -1,9 +1,6 @@
 */bck
 *.pyc
 *.sqlite3
-/reportgenerator/*/migrations/*.py
-/reportgenerator/*/migrations/*.pyc
-!/reportgenerator/*/migrations/*init*.py
-!/reportgenerator/reportgenerator/
 /reportgenerator/static/*
 /reportgenerator/media/*
+/reportgenerator/log/*
